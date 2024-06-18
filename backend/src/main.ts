@@ -18,10 +18,13 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService<ConfigKeyPaths>);
   const { apiPrefix, port } = configService.get<IAppConfig>('app');
+  const allowedOrigins = ['http://localhost:3000'];
 
   app.use(helmet());
   app.use(compression());
-  app.enableCors();
+  app.enableCors({
+    origin: allowedOrigins,
+  });
   app.enableVersioning();
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(new ValidationPipe(validationOptions));

@@ -1,25 +1,48 @@
+/* eslint-disable no-unused-vars */
 import { DialogPanel, DialogTitle } from '@headlessui/react';
-import { UserCircleIcon } from '@heroicons/react/24/outline';
-import { FC } from 'react';
-import { Modal } from '~/components/elements';
-import { UserType } from '~/core/types';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { FC, useState } from 'react';
+import { toast } from 'react-toastify';
+import { delete_book } from '~/api/books';
+import { Modal, Spinner } from '~/components/elements';
+import { CustomError } from '~/core/libs';
+import { BookType } from '~/core/types/book';
 
-type EditUserModalProps = {
+type DeleteBookModalProps = {
     open: boolean;
     onClose: () => void;
-    selectedUser: UserType | null;
+    selectedBook: BookType | null;
+    removeBook: (book: BookType) => void;
 };
 
-const EditUserModal: FC<EditUserModalProps> = props => {
-    const { open, onClose, selectedUser } = props;
+const DeleteBookModal: FC<DeleteBookModalProps> = props => {
+    const { open, onClose, selectedBook, removeBook } = props;
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleDeleteBook = async () => {
+        try {
+            setIsLoading(true);
+            if (!selectedBook?.id) {
+                toast.error('Book ID not found');
+                return;
+            }
+            await delete_book(selectedBook?.id);
+            removeBook(selectedBook);
+            onClose();
+        } catch (error: any) {
+            if (error instanceof CustomError) toast.error(error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return (
         <Modal onClose={onClose} open={open}>
             <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
-                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <UserCircleIcon
-                                className="h-6 w-6 text-green-600"
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <ExclamationTriangleIcon
+                                className="h-6 w-6 text-red-600"
                                 aria-hidden="true"
                             />
                         </div>
@@ -28,13 +51,13 @@ const EditUserModal: FC<EditUserModalProps> = props => {
                                 as="h3"
                                 className="text-base font-semibold leading-6 text-gray-900"
                             >
-                                Update account
+                                Delete book
                             </DialogTitle>
                             <div className="mt-2">
                                 <p className="text-sm text-gray-500">
-                                    Are you sure you want to activate{' '}
+                                    Are you sure you want to delete{' '}
                                     <span className="font-semibold">
-                                        {selectedUser?.firstName}
+                                        {selectedBook?.name}
                                     </span>
                                     ?
                                 </p>
@@ -45,10 +68,10 @@ const EditUserModal: FC<EditUserModalProps> = props => {
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                     <button
                         type="button"
-                        className="inline-flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-600 sm:ml-3 sm:w-auto"
-                        onClick={onClose}
+                        className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                        onClick={handleDeleteBook}
                     >
-                        Update
+                        {isLoading ? <Spinner size="sm" /> : 'Delete'}
                     </button>
                     <button
                         type="button"
@@ -64,4 +87,4 @@ const EditUserModal: FC<EditUserModalProps> = props => {
     );
 };
 
-export default EditUserModal;
+export default DeleteBookModal;

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -96,5 +97,15 @@ export class BooksController {
     @Body(ValidationPipe) roleDto: UpdateBookRequestDto,
   ): Promise<ResponseDto<BookResponseDto>> {
     return this.booksService.updateBook(id, roleDto);
+  }
+
+  @ApiOperation({ description: 'Delete book by id' })
+  @ApiOkCustomResponse(NullDto)
+  @Roles('admin')
+  @Delete('/:id')
+  public deleteBook(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ResponseDto<NullDto>> {
+    return this.booksService.deleteBookById(id);
   }
 }

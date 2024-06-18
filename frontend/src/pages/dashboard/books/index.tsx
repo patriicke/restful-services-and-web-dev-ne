@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
-import { DataTable, TableColumn } from '~/components/elements';
+import { Button, DataTable, TableColumn } from '~/components/elements';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -14,6 +14,10 @@ import { exportBooks } from '~/core/helper/csv/books';
 import { checkRoles } from '~/core/utils/check-role';
 import { useSelector } from 'react-redux';
 import { RootState } from '~/core/types/redux';
+import CreateBookModal from './modal/CreateBookModal';
+import DeleteBookModal from './modal/DeleteBookModal';
+import EditBookModal from './modal/EditBookModal';
+import { Helmet } from 'react-helmet-async';
 
 export const BooksPage = () => {
     const location = useLocation();
@@ -34,6 +38,7 @@ export const BooksPage = () => {
 
     const { setExportData } = useExportContext();
 
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedBook, setSelectedBook] = useState<BookType | null>(null);
@@ -115,7 +120,6 @@ export const BooksPage = () => {
         const searchParams = new URLSearchParams(location.search);
         if (!searchParams.has('page')) searchParams.set('page', '1');
         if (!searchParams.has('limit')) searchParams.set('limit', '10');
-        if (!searchParams.has('roles')) searchParams.set('roles', 'true');
         if (keyword) searchParams.set('search', keyword.toString());
         else searchParams.delete('search');
         const newSearch = searchParams.toString();
@@ -132,28 +136,84 @@ export const BooksPage = () => {
             handleGetUsers();
     }, [query]);
 
+    const addBook = (book: BookType) => {
+        setBooks({
+            ...books,
+            itemCount: books.totalPages + 1,
+            totalItems: books.totalItems + 1,
+            items: [book, ...books.items],
+        });
+    };
+
+    const removeBook = (book: BookType) => {
+        setBooks({
+            ...books,
+            items: books.items.filter(item => item.id !== book.id),
+        });
+    };
+
+    const udpateBook = (book: BookType) => {
+        const updatedBooks = books.items.map(item =>
+            item.id === book.id ? book : item
+        );
+        setBooks({
+            ...books,
+            items: updatedBooks,
+        });
+    };
+
     return (
-        <div className="h-full w-full">
-            <div className="float-right flex flex-wrap justify-between gap-4 whitespace-nowrap py-4">
-                <div className="flex gap-3">
-                    <input
-                        type="text"
-                        className="w-[10rem] rounded border px-3 py-2 text-xs lg:w-[15rem]"
-                        placeholder="Search..."
-                        defaultValue={keyword}
-                        id="search"
-                        onChange={handleChange}
-                    />
+        <>
+            <Helmet>
+                <title>Dashboard - Books</title>
+            </Helmet>
+            <div className="h-full w-full">
+                <div className="float-right flex flex-wrap justify-between gap-4 whitespace-nowrap py-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                        {checkRoles(['admin'], userData) && (
+                            <Button
+                                className="w-[8rem] text-xs"
+                                onClick={() => setIsCreateModalOpen(true)}
+                            >
+                                Create Book
+                            </Button>
+                        )}
+                        <input
+                            type="text"
+                            className="w-[10rem] rounded border px-3 py-2 text-xs lg:w-[20rem]"
+                            placeholder="Search..."
+                            defaultValue={keyword}
+                            id="search"
+                            onChange={handleChange}
+                        />
+                    </div>
                 </div>
+                <DataTable
+                    columns={columns}
+                    data={books.items}
+                    isLoading={isLoading}
+                    currentPage={books.currentPage}
+                    totalItems={books.totalItems}
+                    totalPages={books.totalPages}
+                />
+                <CreateBookModal
+                    open={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    addBook={addBook}
+                />
+                <EditBookModal
+                    open={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    selectedBook={selectedBook}
+                    udpateBook={udpateBook}
+                />
+                <DeleteBookModal
+                    open={isDeleteModalOpen}
+                    onClose={() => setIsDeleteModalOpen(false)}
+                    selectedBook={selectedBook}
+                    removeBook={removeBook}
+                />
             </div>
-            <DataTable
-                columns={columns}
-                data={books.items}
-                isLoading={isLoading}
-                currentPage={books.currentPage}
-                totalItems={books.totalItems}
-                totalPages={books.totalPages}
-            />
-        </div>
+        </>
     );
 };

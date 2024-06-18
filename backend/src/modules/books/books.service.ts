@@ -126,6 +126,23 @@ export class BooksService {
   }
 
   /**
+   * Delete book by id
+   * @param id {string}
+   * @returns {Promise<ResponseDto<BookResponseDto>>}
+   */
+  public async deleteBookById(id: string): Promise<ResponseDto<null>> {
+    const bookEntity = await this.bookRepository.findOneBy({ id });
+    if (!bookEntity) {
+      throw new NotFoundException();
+    }
+    await this.bookRepository.delete({ id });
+    return this.responseService.makeResponse({
+      message: 'Deleted book by id sucessfully',
+      payload: null,
+    });
+  }
+
+  /**
    * Update book by id
    * @param id {string}
    * @param bookDto {UpdateBookRequestDto}

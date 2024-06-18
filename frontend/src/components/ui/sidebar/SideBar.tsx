@@ -89,7 +89,10 @@ export const SideBar: React.FC = () => {
                             {sidebarLinks.map(({ href, icon, name }, index) => (
                                 <li
                                     key={index}
-                                    onClick={() => setCurrentLink(index)}
+                                    onClick={() => {
+                                        setCurrentLink(index);
+                                        toggleSidebar();
+                                    }}
                                 >
                                     <Link
                                         to={href}

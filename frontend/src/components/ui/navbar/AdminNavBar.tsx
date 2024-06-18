@@ -46,7 +46,7 @@ export const AdminNavBar = () => {
                                 </li>
                                 <li className="flex items-center">
                                     <span className="text-xs font-semibold text-white hover:text-opacity-80">
-                                        Admin
+                                        User
                                     </span>
                                     <span className="px-3 text-white">
                                         <SVGS.ForwardArrow />
