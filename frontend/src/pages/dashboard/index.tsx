@@ -1,12 +1,37 @@
 import { BookOpenIcon, UsersIcon } from '@heroicons/react/24/outline';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { get_stats } from '~/api/stats';
+import { Spinner } from '~/components/elements';
+import { CustomError } from '~/core/libs';
 import { RootState } from '~/core/types/redux';
+import { StatsTypes } from '~/core/types/stat';
 import { checkRoles } from '~/core/utils/check-role';
 
 export const DashboardPage: React.FC = () => {
     const { userData } = useSelector((state: RootState) => state.user);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [stats, setStats] = useState<StatsTypes>({ books: 0, users: 0 });
+
+    const handleGetStats = async () => {
+        try {
+            setIsLoading(true);
+            if (checkRoles(['admin'], userData)) {
+                const data = await get_stats();
+                setStats(data.payload.stats);
+            }
+        } catch (error) {
+            if (error instanceof CustomError) toast.error(error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        handleGetStats();
+    }, []);
 
     const AdminCards = () => {
         return (
@@ -16,7 +41,11 @@ export const DashboardPage: React.FC = () => {
                         <div className="text-sm text-gray-400 ">Users</div>
                         <div className="flex items-center pt-1">
                             <div className="text-xl font-medium text-primary-500">
-                                0
+                                {isLoading ? (
+                                    <Spinner size="sm" />
+                                ) : (
+                                    stats.users
+                                )}
                             </div>
                         </div>
                     </div>
@@ -29,7 +58,11 @@ export const DashboardPage: React.FC = () => {
                         <div className="text-sm text-gray-400 ">Books</div>
                         <div className="flex items-center pt-1">
                             <div className="text-xl font-medium text-primary-500 ">
-                                0
+                                {isLoading ? (
+                                    <Spinner size="sm" />
+                                ) : (
+                                    stats.books
+                                )}
                             </div>
                         </div>
                     </div>
@@ -44,7 +77,7 @@ export const DashboardPage: React.FC = () => {
                         </div>
                         <div className="flex items-center pt-1">
                             <div className="text-xl font-medium text-primary-500 ">
-                                0
+                                {isLoading ? <Spinner size="sm" /> : 0}
                             </div>
                         </div>
                     </div>
@@ -59,7 +92,7 @@ export const DashboardPage: React.FC = () => {
                         </div>
                         <div className="flex items-center pt-1">
                             <div className="text-xl font-medium text-primary-500 ">
-                                0
+                                {isLoading ? <Spinner size="sm" /> : 0}
                             </div>
                         </div>
                     </div>
@@ -81,7 +114,7 @@ export const DashboardPage: React.FC = () => {
                         </div>
                         <div className="flex items-center pt-1">
                             <div className="text-xl font-medium text-primary-500">
-                                0
+                                {isLoading ? <Spinner size="sm" /> : 0}
                             </div>
                         </div>
                     </div>
@@ -97,7 +130,7 @@ export const DashboardPage: React.FC = () => {
                         </div>
                         <div className="flex items-center pt-1">
                             <div className="text-xl font-medium text-primary-500">
-                                0
+                                {isLoading ? <Spinner size="sm" /> : 0}
                             </div>
                         </div>
                     </div>

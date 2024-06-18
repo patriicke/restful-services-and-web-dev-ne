@@ -10,6 +10,7 @@ import { NullDto } from '~/common/dtos/null.dto';
 import { ApiBadRequestCustomResponse } from '~/common/decorators/api-bad-request-custom-response.decorator';
 import { ApiUnauthorizedCustomResponse } from '~/common/decorators/api-unauthorized-custom-response.decorator';
 import { ApiForbiddenCustomResponse } from '~/common/decorators/api-forbidden-custom-response.decorator';
+import { ApiOkCustomResponse } from '~/common/decorators';
 
 @ApiTags('Stats')
 @Roles('admin')
@@ -26,6 +27,7 @@ export class StatsController {
   constructor(private statsService: StatsService) {}
 
   @Get()
+  @ApiOkCustomResponse(StatDto)
   getStats(): Promise<ResponseDto<StatDto>> {
     return this.statsService.getStats();
   }

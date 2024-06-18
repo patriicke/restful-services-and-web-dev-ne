@@ -19,8 +19,10 @@ export class StatsService {
     return this.resposeService.makeResponse({
       message: 'Retrieved role by id',
       payload: {
-        books,
-        users,
+        stats: {
+          books,
+          users,
+        },
       },
     });
   }
