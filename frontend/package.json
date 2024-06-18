@@ -1,0 +1,92 @@
+{
+    "name": "portfolio",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "start": "craco start",
+        "start:dev": "craco start --watch",
+        "build": "craco build",
+        "test": "craco test",
+        "eject": "react-scripts eject"
+    },
+    "dependencies": {
+        "@apollo/client": "^3.6.9",
+        "@craco/craco": "^6.4.3",
+        "@fortawesome/fontawesome-svg-core": "^6.4.0",
+        "@fortawesome/free-regular-svg-icons": "^6.4.0",
+        "@fortawesome/free-solid-svg-icons": "^6.4.0",
+        "@fortawesome/react-fontawesome": "^0.2.0",
+        "@headlessui/react": "^2.0.4",
+        "@heroicons/react": "^2.1.3",
+        "@hookform/resolvers": "^2.9.3",
+        "@reduxjs/toolkit": "^1.9.3",
+        "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/line-clamp": "^0.4.0",
+        "@tailwindcss/typography": "^0.5.4",
+        "@testing-library/jest-dom": "^5.14.1",
+        "@testing-library/react": "^13.0.0",
+        "@testing-library/user-event": "^13.2.1",
+        "@types/jest": "^27.0.1",
+        "@types/node": "^16.7.13",
+        "@types/react": "^18.0.0",
+        "@types/react-dom": "^18.0.0",
+        "@typescript-eslint/eslint-plugin": "^5.54.0",
+        "@typescript-eslint/parser": "^5.0.1",
+        "autoprefixer": "^10.4.7",
+        "axios": "^1.3.3",
+        "clsx": "^1.2.0",
+        "dayjs": "^1.11.3",
+        "eslint": "^8.7.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "graphql": "^16.5.0",
+        "jwt-decode": "^3.1.2",
+        "postcss": "^8.4.14",
+        "prettier": "^2.5.1",
+        "prettier-plugin-tailwindcss": "^0.1.11",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-error-boundary": "^3.1.4",
+        "react-helmet-async": "^1.3.0",
+        "react-hook-form": "^7.33.1",
+        "react-input-verification-code": "^1.0.2",
+        "react-redux": "^8.0.5",
+        "react-router-dom": "6",
+        "react-scripts": "5.0.1",
+        "react-toastify": "^9.0.5",
+        "react-verification-input": "^3.3.0",
+        "redux-persist": "^6.0.0",
+        "redux-thunk": "^2.4.2",
+        "styled-component": "^2.8.0",
+        "styled-components": "^5.3.9",
+        "swiper": "^9.1.0",
+        "tailwindcss": "^3.1.6",
+        "typescript": "^4.4.4",
+        "web-vitals": "^2.1.0",
+        "zod": "^3.17.3"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.54.0",
+        "@typescript-eslint/parser": "^5.0.1",
+        "eslint": "^8.7.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "prettier-plugin-tailwindcss": "^0.1.11"
+    }
+}

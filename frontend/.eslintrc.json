@@ -1,0 +1,25 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "extends": ["eslint:recommended"],
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true,
+        "node": true
+    },
+    "rules": {
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/explicit-function-return-type": [
+            "off",
+            { "allowExpressions": true }
+        ],
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-undef": "off",
+        "import/no-commonjs": "off",
+        "no-unused-vars": "warn"
+    }
+}
