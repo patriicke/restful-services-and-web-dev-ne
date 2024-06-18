@@ -11,6 +11,7 @@ import { UsersModule } from './modules/users/users.module';
 import config from './config';
 import { ProfilesModule } from './modules/profile/profiles.module';
 import { BooksModule } from './modules/books/books.module';
+import { StatsModule } from './modules/stats/stats.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BooksModule } from './modules/books/books.module';
     UsersModule,
     RolesModule,
     BooksModule,
+    StatsModule,
   ],
 })
 export class AppModule implements NestModule {
