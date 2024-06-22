@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
-import { get_profile, logout_user, refresh_token } from '~/api/auth';
+import { get_profile, refresh_token } from '~/api/auth';
 import { Spinner } from '~/components/elements';
 import {
     addTokensRedux,
@@ -17,6 +17,10 @@ const AppLayout: React.FC = () => {
     const { tokensData } = useSelector((state: RootState) => state.tokens);
     const [loading, setLoading] = useState<boolean>(true);
     const [refreshInterval, setRefreshInterval] = useState<number | null>(null);
+    const [hasAttemptedRefresh, setHasAttemptedRefresh] =
+        useState<boolean>(false);
+    const [hasAttemptedProfile, setHasAttemptedProfile] =
+        useState<boolean>(false);
 
     const handleGetProfile = async () => {
         if (tokensData.accessToken) {
@@ -24,42 +28,43 @@ const AppLayout: React.FC = () => {
                 const data = await get_profile();
                 const { user } = data.payload;
                 dispatch(adduserRedux(user));
+                setHasAttemptedProfile(true);
             } catch (error) {
-                handleLogout();
+                handleClearData();
             }
         }
 
         if (!tokensData.accessToken && userData.id) {
-            handleLogout();
+            handleClearData();
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            await logout_user({ refreshToken: tokensData.refreshToken });
-        } catch (error) {
-            console.log(error);
-        } finally {
-            dispatch(removeTokensRedux());
-            dispatch(removeUserRedux());
-        }
+    const handleClearData = async () => {
+        dispatch(removeTokensRedux());
+        dispatch(removeUserRedux());
+        setHasAttemptedRefresh(false);
     };
 
     const handleRefreshToken = async () => {
-        try {
-            const data = await refresh_token({
-                refreshToken: tokensData.refreshToken,
-            });
-            const { tokens } = data.payload;
-            dispatch(addTokensRedux(tokens));
+        if (!hasAttemptedRefresh) {
+            setHasAttemptedRefresh(true);
+            try {
+                const data = await refresh_token({
+                    refreshToken: tokensData.refreshToken,
+                });
+                const { tokens } = data.payload;
+                dispatch(addTokensRedux(tokens));
 
-            const accessTokenPayload = decodeToken(tokens.accessToken);
-            setRefreshInterval(
-                accessTokenPayload.exp * 1000 - Date.now() - 30000
-            );
-        } catch (error) {
-            console.log('error:', error);
-            handleLogout();
+                const accessTokenPayload = decodeToken(tokens.accessToken);
+                setRefreshInterval(
+                    accessTokenPayload.exp * 1000 - Date.now() - 30000
+                );
+
+                if (!hasAttemptedProfile) await handleGetProfile();
+            } catch (error) {
+                console.log('error:', error);
+                handleClearData();
+            }
         }
     };
 
@@ -71,8 +76,11 @@ const AppLayout: React.FC = () => {
                 const refreshTokenPayload = decodeToken(refreshToken);
 
                 if (accessTokenPayload.exp * 1000 < Date.now()) {
-                    if (refreshTokenPayload.exp * 1000 < Date.now()) {
-                        handleLogout();
+                    if (
+                        refreshTokenPayload.exp * 1000 < Date.now() ||
+                        hasAttemptedRefresh
+                    ) {
+                        handleClearData();
                     } else {
                         await handleRefreshToken();
                     }
@@ -92,10 +100,10 @@ const AppLayout: React.FC = () => {
 
     useEffect(() => {
         handleCheckAll();
-    }, []);
+    }, [tokensData]);
 
     useEffect(() => {
-        if (refreshInterval !== null) {
+        if (refreshInterval !== null && tokensData.refreshToken) {
             const interval = setInterval(() => {
                 handleRefreshToken();
             }, refreshInterval);
