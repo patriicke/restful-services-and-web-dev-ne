@@ -18,7 +18,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService<ConfigKeyPaths>);
   const { apiPrefix, port } = configService.get<IAppConfig>('app');
-  const allowedOrigins = ['http://localhost:3000'];
+  const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
 
   app.use(helmet());
   app.use(compression());

@@ -38,6 +38,7 @@ const LoginPage: React.FC = () => {
             setIsLoading(false);
         }
     };
+
     return (
         <>
             <Helmet>
